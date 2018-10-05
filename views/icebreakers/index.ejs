@@ -1,0 +1,10 @@
+Welcome to Icebreaker(index.ejs)
+
+<p><ul>
+    <% icebreakers.forEach(function(icebreaker) { %>
+        <li><%= icebreaker.text %> <a href="/icebreakers/<%= icebreaker._id %>"><em>show</em></a></li>
+    <% }) %>
+</ul></p>
+
+<a href="/icebreakers/new">New Icebreaker</a>
+

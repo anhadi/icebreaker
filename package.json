@@ -1,0 +1,25 @@
+{
+  "name": "icebreaker",
+  "version": "1.0.0",
+  "description": "Create, comment, edit, and review team icebreakers",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anhadi/icebreaker.git"
+  },
+  "author": "anhadi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anhadi/icebreaker/issues"
+  },
+  "homepage": "https://github.com/anhadi/icebreaker#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.3",
+    "mongoose": "^5.3.1"
+  }
+}
