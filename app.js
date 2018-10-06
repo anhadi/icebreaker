@@ -2,11 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
 
 const Icebreaker = require("./models/icebreaker");
 
 mongoose.connect('mongodb://localhost:27017/icebreaker', { useNewUrlParser: true });
-app.use(bodyParser.urlencoded({extended: true}));
+
 
 app.set('view engine', 'ejs');
 
@@ -15,7 +17,7 @@ app.get('/icebreakers', function(req, res) {
         if(err){
             console.log(err);
         } else {
-            res.render("icebreakers/index", {icebreakers:icebreakers});
+            res.status(200).render("icebreakers/index", {icebreakers:icebreakers});
         }
     });
 });
@@ -31,7 +33,6 @@ app.post('/icebreakers', function(req, res) {
         if(err){
             console.log(err);
         }else{
-            console.log(newlyCreated);
             res.redirect("/icebreakers");
         }
     });
@@ -50,3 +51,5 @@ app.get('/icebreakers/:id', function(req, res) {
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("The Icebreaker server is up!");
 })
+
+module.exports = {app}
