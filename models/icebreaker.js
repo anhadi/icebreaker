@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-var icebreakerSchema = mongoose.Schema({
+const icebreakerSchema = mongoose.Schema({
     text: String,
     image: String,
     createdAt: { type: Date, default: Date.now },
@@ -19,6 +19,6 @@ var icebreakerSchema = mongoose.Schema({
     ]
 });
 
-var Icebreaker = mongoose.model("Icebreaker", icebreakerSchema);
+const Icebreaker = mongoose.model("Icebreaker", icebreakerSchema);
 
 module.exports = Icebreaker;

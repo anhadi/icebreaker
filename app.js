@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 
 const Icebreaker = require("./models/icebreaker");
+const Comment = require("./models/comment");
 
 var app = express();
 app.use(bodyParser.json());
@@ -13,6 +14,9 @@ app.use(methodOverride("_method"));
 app.set('view engine', 'ejs');
 
 mongoose.connect('mongodb://localhost:27017/icebreaker', { useNewUrlParser: true });
+
+
+// ---------------------------------------------------- icebreakers routes
 
 app.get('/icebreakers', function(req, res) {
     Icebreaker.find({}, function(err, icebreakers){
@@ -41,13 +45,21 @@ app.post('/icebreakers', function(req, res) {
 });
 
 app.get('/icebreakers/:id', function(req, res) {
-    Icebreaker.findById(req.params.id, function(err, icebreaker){
+    Icebreaker.findById(req.params.id).populate('comments').exec(function(err, icebreaker){
         if(err){
             console.log(err);
-        } else {
+        }else{
             res.render('icebreakers/show', {icebreaker:icebreaker});
         }
-    });
+    })
+    
+    // Icebreaker.findById(req.params.id, function(err, icebreaker){
+    //     if(err){
+    //         console.log(err);
+    //     } else {
+    //         res.render('icebreakers/show', {icebreaker:icebreaker});
+    //     }
+    // });
 });
 
 app.get('/icebreakers/:id/edit', function(req, res) {
@@ -83,5 +95,28 @@ app.delete('/icebreakers/:id', function(req, res){
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("The Icebreaker server is up!");
 });
+
+
+// ---------------------------------------------------- comments routes
+
+app.post('/icebreakers/:id/comments', function(req, res) {
+    var text = req.body.text;
+    
+    Icebreaker.findById(req.params.id, function(err, icebreaker) {
+        if(err){
+            console.log(err);
+        }else{
+            Comment.create({text:text}, function(err, comment){
+                if(err){
+                    console.log(err);
+                } else {
+                    icebreaker.comments.push(comment);
+                    icebreaker.save();
+                    res.redirect('/icebreakers/' + req.params.id);
+                }
+            }) 
+        }
+    })
+})
 
 module.exports = {app}

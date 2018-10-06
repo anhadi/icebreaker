@@ -3,3 +3,15 @@
 <form action="/icebreakers/<%= icebreaker._id %>/?_method=DELETE" method="POST">
     <button class="btn btn-xs btn-danger">delete</button>
 </form> 
+
+
+<form action="/icebreakers/<%= icebreaker._id%>/comments" method="POST">
+    <input type="text" placeholder="Respond to icebreaker!" name="text" required>
+    <button>Submit</button>
+</form>
+
+<ul>
+<% icebreaker.comments.forEach(function(comment){ %>
+    <li><%= comment.text %></li>
+<% }) %>
+</ul>
