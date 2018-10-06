@@ -52,14 +52,6 @@ app.get('/icebreakers/:id', function(req, res) {
             res.render('icebreakers/show', {icebreaker:icebreaker});
         }
     })
-    
-    // Icebreaker.findById(req.params.id, function(err, icebreaker){
-    //     if(err){
-    //         console.log(err);
-    //     } else {
-    //         res.render('icebreakers/show', {icebreaker:icebreaker});
-    //     }
-    // });
 });
 
 app.get('/icebreakers/:id/edit', function(req, res) {
@@ -115,6 +107,42 @@ app.post('/icebreakers/:id/comments', function(req, res) {
                     res.redirect('/icebreakers/' + req.params.id);
                 }
             }) 
+        }
+    })
+})
+
+app.get('/icebreakers/:id/comments/:comment_id/edit', function(req, res) {
+    Icebreaker.findById(req.params.id, function(err, icebreaker) {
+        if(err){
+            console.log(err);
+        }else{
+            Comment.findById(req.params.comment_id, function(err, comment) {
+                if(err){
+                    console.log(err);
+                } else {
+                    res.render('comments/edit', {icebreaker:icebreaker, comment:comment})
+                }
+            })
+        }
+    });
+});
+
+app.put('/icebreakers/:id/comments/:comment_id', function(req, res){
+    Comment.findByIdAndUpdate(req.params.comment_id, {text: req.body.text}, function(err, comment){
+        if(err){
+            console.log(err);
+        }else{
+            res.redirect('/icebreakers/' + req.params.id);
+        }
+    });
+});
+
+app.delete('/icebreakers/:id/comments/:comment_id', function(req, res){
+    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if(err){
+            console.log(err);
+        }else{
+            res.redirect('/icebreakers/' + req.params.id);
         }
     })
 })

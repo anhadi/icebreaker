@@ -12,6 +12,12 @@
 
 <ul>
 <% icebreaker.comments.forEach(function(comment){ %>
-    <li><%= comment.text %></li>
+    <li>
+        <%= comment.text %>
+        <a href='/icebreakers/<%= icebreaker._id %>/comments/<%= comment._id %>/edit'>edit</a>
+        <form action="/icebreakers/<%= icebreaker._id%>/comments/<%= comment._id %>/?_method=DELETE" method="POST">
+            <button>Delete</button>
+        </form>
+    </li>
 <% }) %>
 </ul>

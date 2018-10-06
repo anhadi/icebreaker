@@ -1,0 +1,7 @@
+<p>Edit response</p>
+
+<p><%= icebreaker.text %></p>
+<form action="/icebreakers/<%= icebreaker._id%>/comments/<%= comment._id%>/?_method=PUT" method="POST">
+    <input type="text" value="<%= comment.text%>" name="text" required>
+    <button>Submit</button>
+</form>
