@@ -1,0 +1,6 @@
+UPDATE icebreaker(ejs)
+
+<form action="/icebreakers/<%= icebreaker._id%>/?_method=PUT" method="POST">
+    <input type="text" value="<%= icebreaker.text%>" name="text" required>
+    <button>Submit</button>
+</form>

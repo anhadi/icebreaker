@@ -1,1 +1,5 @@
 <p><%= icebreaker.text%> - <em><%= icebreaker.createdAt.toDateString()%></em></p>
+<a href='/icebreakers/<%= icebreaker._id%>/edit'><em>edit</em></a>
+<form action="/icebreakers/<%= icebreaker._id %>/?_method=DELETE" method="POST">
+    <button class="btn btn-xs btn-danger">delete</button>
+</form> 

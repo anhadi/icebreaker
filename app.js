@@ -1,16 +1,18 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-var app = express();
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+const methodOverride = require("method-override");
 
 const Icebreaker = require("./models/icebreaker");
 
-mongoose.connect('mongodb://localhost:27017/icebreaker', { useNewUrlParser: true });
-
+var app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride("_method"));
 
 app.set('view engine', 'ejs');
+
+mongoose.connect('mongodb://localhost:27017/icebreaker', { useNewUrlParser: true });
 
 app.get('/icebreakers', function(req, res) {
     Icebreaker.find({}, function(err, icebreakers){
@@ -45,11 +47,41 @@ app.get('/icebreakers/:id', function(req, res) {
         } else {
             res.render('icebreakers/show', {icebreaker:icebreaker});
         }
+    });
+});
+
+app.get('/icebreakers/:id/edit', function(req, res) {
+    Icebreaker.findById(req.params.id, function(err, icebreaker){
+        if(err){
+            console.log(err);
+        }else{
+            res.render('icebreakers/edit', {icebreaker:icebreaker});
+        }
+    })
+})
+
+app.put('/icebreakers/:id', function(req, res){
+    Icebreaker.findByIdAndUpdate(req.params.id, {text: req.body.text}, function(err, updatedIcebreaker){
+        if(err){
+            console.log(err);
+        }else{
+            res.redirect('/icebreakers/'+updatedIcebreaker._id);
+        }
+    })
+})
+
+app.delete('/icebreakers/:id', function(req, res){
+    Icebreaker.findByIdAndRemove(req.params.id, function(err){
+        if(err){
+            console.log(err);
+        }else{
+            res.redirect('/icebreakers');
+        }
     })
 })
 
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("The Icebreaker server is up!");
-})
+});
 
 module.exports = {app}
