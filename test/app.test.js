@@ -60,5 +60,22 @@ describe('POST /icebreakers route', () => {
 				    }
 				});
 			});
-    })
+    });
+})
+
+describe('GET /icebreakers/:id route', () => {
+    it('should give 200', (done) => {
+        Icebreaker.find({}, function(err, icebreakers){
+			if(err){
+				console.log(err);
+			}else{
+    			var icebreakerId = icebreakers[icebreakers.length-1]._id.toHexString();
+    			request(app)
+        		    .get('/icebreakers/' + icebreakerId)
+        		    .expect(200)
+        		    .end(done);
+			}
+		});
+		
+    });
 })
