@@ -10,7 +10,7 @@ const Icebreaker = require('./../models/icebreaker');
 app.use(bodyParser.urlencoded({extended: true}));
 
 describe("GET /icebreakers page", () => {
-	it('should give 200', (done) => {
+	it('should return 200', (done) => {
 		request(app)
 			.get('/icebreakers')
 			.expect(200)
@@ -19,7 +19,7 @@ describe("GET /icebreakers page", () => {
 });
 
 describe("GET /icebreakers/new page", () => {
-    it('should give a 200', (done) => {
+    it('should return 200', (done) => {
         request(app)
             .get('/icebreakers/new')
             .expect(200)
@@ -64,7 +64,7 @@ describe('POST /icebreakers route', () => {
 })
 
 describe('GET /icebreakers/:id route', () => {
-    it('should give 200', (done) => {
+    it('should return 200', (done) => {
         Icebreaker.find({}, function(err, icebreakers){
 			if(err){
 				console.log(err);
@@ -78,4 +78,80 @@ describe('GET /icebreakers/:id route', () => {
 		});
 		
     });
+})
+
+describe('GET /icebreakers/:id/edit route', () => {
+    it('should return 200', (done) => {
+        Icebreaker.find({}, function(err, icebreakers){
+			if(err){
+				console.log(err);
+			}else{
+    			var icebreakerId = icebreakers[icebreakers.length-1]._id.toHexString();
+                request(app)
+                    .get('/icebreakers/'+icebreakerId)
+                    .expect(200)
+                    .end(done);
+			}
+		});
+    });
+})
+
+describe('PUT /icebreakers/:id route', () => {
+    it('should update icebreaker', (done) => {
+        Icebreaker.find({}, function(err, icebreakers){
+			if(err){
+				console.log(err);
+			}else{
+    			var icebreakerId = icebreakers[icebreakers.length-1]._id.toHexString();
+                request(app)
+                    .put('/icebreakers/'+icebreakerId)
+                    .send({
+                        text: 'UPDATED'
+                    })
+                    .expect(302)
+                    .end((err) => {
+                       if(err){
+                           console.log(err);
+                       } 
+                       
+                       Icebreaker.findById(icebreakerId, function(err, icebreaker) {
+                           if(err){
+                               console.log(err);
+                           } else {
+                               expect(icebreaker.text).toBe('UPDATED');
+                               done();
+                           }
+                       });
+                    });
+			}
+		});
+    });
+});
+
+describe('DELETE /icebreakers/:id route', () => {
+    it('should delete todo', (done) => {
+        Icebreaker.find({}, function(err, icebreakers) {
+            if(err){
+                console.log(err);
+            }
+            var prevLen = icebreakers.length; 
+            var icebreakerId = icebreakers[icebreakers.length-1]._id.toHexString();
+            request(app)
+                .delete('/icebreakers/'+icebreakerId)
+                .expect(302)
+                .end((err) => {
+                    if(err){
+                        console.log(err);
+                    }
+                    Icebreaker.find({}, function(err, icebreakers) {
+                        if(err){
+                            console.log(err);
+                            }
+                        expect(icebreakers.length).toBe(prevLen-1);
+                        done();
+                            
+                        })
+                    });            
+        })
+    })
 })
