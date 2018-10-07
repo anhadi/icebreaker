@@ -138,11 +138,17 @@ app.put('/icebreakers/:id/comments/:comment_id', function(req, res){
 });
 
 app.delete('/icebreakers/:id/comments/:comment_id', function(req, res){
-    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+    Icebreaker.findByIdAndUpdate(req.params.id, { $pull: { comments: req.params.comment_id  } }, function(err, icebreaker) {
         if(err){
             console.log(err);
-        }else{
-            res.redirect('/icebreakers/' + req.params.id);
+        } else {
+            Comment.findByIdAndRemove(req.params.comment_id, function(err){
+                if(err){
+                    console.log(err);
+                }else{
+                    res.redirect('/icebreakers/' + req.params.id);
+                }
+            })
         }
     })
 })

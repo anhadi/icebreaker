@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 
 const {app} = require('./../app');
 const Icebreaker = require('./../models/icebreaker');
+const Comment = require('./../models/comment');
 
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -127,6 +128,126 @@ describe('PUT /icebreakers/:id route', () => {
     });
 });
 
+describe('POST /icebreakers/:id/comments', () => {
+    it('should add new comment to icebreakers comment array', (done) => {
+        var prevLen;
+        var icebreakersId;
+        var text = 'new test COMMENT';
+        Icebreaker.find({}, function(err, icebreakers) {
+            if(err){
+                return done(err);
+            }else{
+                prevLen = icebreakers[icebreakers.length-1].comments.length;
+                icebreakersId = icebreakers[icebreakers.length-1]._id.toHexString();
+                
+                request(app)
+                    .post('/icebreakers/'+ icebreakersId + '/comments')
+                    .send({
+                        text: text
+                    })
+                    .expect(302)
+                    .end((err) => {
+        				if(err){
+        					return done(err);
+        				}
+        
+        				Icebreaker.find({}, function(err, icebreakers){
+        				    if(err){
+        				        return done(err);
+        				    }else{
+        				        expect(icebreakers[icebreakers.length-1].comments.length).toBe(prevLen+1);
+        				        done();
+        				    }
+        				});
+        			});
+            }
+        })
+    });
+})
+
+describe('PUT /icebreakers/:id/comments/:comment_id route', () => {
+    it('should update comment on icebreaker', (done) => {
+        Icebreaker.find({}, function(err, icebreakers){
+			if(err){
+				return done(err);
+			}else{
+    			var prevLen = icebreakers[icebreakers.length-1].comments.length;
+                var icebreakersId = icebreakers[icebreakers.length-1]._id.toHexString();
+                
+                Icebreaker.findById(icebreakersId, function(err, icebreaker) {
+                    if(err){
+                        console.log(err);
+                    }else {
+                        var commentId = icebreaker.comments[icebreaker.comments.length-1]._id.toHexString();
+                        var text = 'updated comment';
+                        request(app)
+                            .put('/icebreakers/'+ icebreakersId + '/comments/' + commentId)
+                            .send({
+                                text: text
+                            })
+                            .expect(302)
+                            .end((err) => {
+                				if(err){
+                					return done(err);
+                				}
+                
+                				Comment.findById(commentId, function(err, comment){
+                				    if(err){
+                				        return done(err);
+                				    }else{
+                				        expect(comment.text).toBe(text);
+                				        done();
+                				    }
+                				});
+                			});
+                    }
+                })
+			}
+		});
+    });
+});
+
+describe('DELETE /icebreakers/:id/comments/:comment_id', ()=>{
+    it('should delete comment from icebreakers comment array', (done) => {
+        var prevLen;
+        var icebreakersId;
+        Icebreaker.find({}, function(err, icebreakers) {
+            if(err){
+                return done(err);
+            }else{
+                prevLen = icebreakers[icebreakers.length-1].comments.length;
+                icebreakersId = icebreakers[icebreakers.length-1]._id.toHexString();
+                
+                Comment.find({}, function(err, comments) {
+                    if(err){
+                        console.log(err);
+                    }else{
+                        var commentId =comments[comments.length-1]._id;
+                        request(app)
+                            .delete('/icebreakers/'+ icebreakersId + '/comments/' + commentId)
+                            .expect(302)
+                            .end((err) => {
+                				if(err){
+                					return done(err);
+                				}
+                
+                				Icebreaker.findById(icebreakersId, function(err, icebreaker){
+                				    if(err){
+                				        return done(err);
+                				    }else{
+                				        expect(icebreaker.comments.length).toBe(prevLen-1);
+                				    
+                    					done();  
+                				    }
+                				});
+                			});
+                    }
+                })
+            }
+        })
+    });
+})
+
 describe('DELETE /icebreakers/:id route', () => {
     it('should delete todo', (done) => {
         Icebreaker.find({}, function(err, icebreakers) {
@@ -154,3 +275,4 @@ describe('DELETE /icebreakers/:id route', () => {
         })
     })
 })
+
