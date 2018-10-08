@@ -1,5 +1,7 @@
 <h1>Welcome to Icebreaker(index.ejs)</h1>
 
+<a href="/auth/facebook">Login with Facebook</a>
+
 <p><ul>
     <% icebreakers.forEach(function(icebreaker) { %>
         <li><%= icebreaker.text %> <a href="/icebreakers/<%= icebreaker._id %>"><em>show</em></a></li>
