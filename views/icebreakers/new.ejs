@@ -1,6 +1,38 @@
-Create new icebreaker(ejs)
+<% include ../partials/header %>
 
-<form action="/icebreakers" method="POST">
-    <input type="text" placeholder="Ask an icebreaker!" name="text" required>
-    <button>Submit</button>
-</form>
+<div class='container'>
+
+    <div><h1 class="display-4" id="one">Create an Icebreaker</h1></div>
+       
+    <form action="/icebreakers" method="POST">
+        <div class='formContainer'>
+          
+            <div class="form-group">
+                <label for="teamName">Which team is this icebreaker for?</label>
+                <input type="text" class="form-control" id="teamName" placeholder="Team name" name="icebreaker[team]" required>
+            </div>
+    
+            <div class="form-group">
+                <label>Give your icebreaker a title. This is what people will see on the home page.</label>
+                <input type="text" class="form-control" placeholder="Title" name="icebreaker[title]" required>
+            </div>
+          
+            <div class="form-group">
+                <label for="exampleTextarea">Share a cool story or fact about yourself.</label>
+                <textarea class="form-control" id="exampleTextarea" placeholder="Title" name="icebreaker[text]" required rows="3"></textarea>
+            </div>
+              
+            <div class="form-group">
+                <label>Ask your teammates an icebreaker!</label>
+                <input type="text" class="form-control" placeholder="Icebreaker question" name="icebreaker[question]" required>
+            </div>
+              
+            <button type="submit" class="btn btn-primary btnBlue">Submit</button>
+        </div>
+    </form>
+    
+    <div><a href='/icebreakers' class="btn btn-primary btnBlue">Index</a></div>
+
+</div>
+
+<% include ../partials/footer %>

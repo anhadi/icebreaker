@@ -1,12 +1,30 @@
-<h1>Welcome to Icebreaker(index.ejs)</h1>
+<% include ../partials/header %>
 
-<a href="/auth/facebook">Login with Facebook</a>
 
-<p><ul>
-    <% icebreakers.forEach(function(icebreaker) { %>
-        <li><%= icebreaker.text %> <a href="/icebreakers/<%= icebreaker._id %>"><em>show</em></a></li>
-    <% }) %>
-</ul></p>
+<div class="jumbotron">
+    <div class="img"></div>
+    <div class='container'>
+        <h1 class="display-4" id="one">Icebreakers!</h1>
+        <p class="lead">Learn more about the remarkable individuals around you. Share a noteable experience or ask your teammates about one of the theirs! You will always be astounded, inspired, and entertained. Or at least tickled.</p>
+        <hr class="my-4">
+        <p><a href="/auth/facebook">Login with Facebook</a></p>
+        <a class="btn btn-primary btn-lg" href="/icebreakers/new" role="button">Create Icebreaker</a>
+    </div>
+</div>
 
-<a href="/icebreakers/new">New Icebreaker</a>
+<div class="container container2">
+    <div class="row">
+        <% icebreakers.forEach(function(icebreaker) { %>
+            <div class="col-lg-4 col-md-6 col-sm-12">
+                <a class='login' href="/icebreakers/<%= icebreaker._id %>">
+                    <div class="thumbnail">
+                        <h4><%= icebreaker.title %></h4>
+                    </div>
+                </a>
+            </div>
+        <% }) %>
+    </div>
+</div>
 
+
+<% include ../partials/footer %>

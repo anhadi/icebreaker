@@ -1,23 +1,52 @@
-<p><%= icebreaker.text%> - <em><%= icebreaker.createdAt.toDateString()%></em></p>
-<a href='/icebreakers/<%= icebreaker._id%>/edit'><em>edit</em></a>
+<% include ../partials/header %>
+
+<div class='container'>
+    <div class='formContainer'>
+<div><h1 class="display-4" id="one"><%= icebreaker.title%></h1></div>
+<div>
+    <p><em><%= icebreaker.createdAt.toDateString()%></em></p>
+    <p><%= icebreaker.text%></p>
+</div>
+
+<div class="input-group">
+    <a href='/icebreakers/<%= icebreaker._id%>/edit' class='btn btn-secondary btnSmall'>edit</a>
+    <span class="input-group-btn">
 <form action="/icebreakers/<%= icebreaker._id %>/?_method=DELETE" method="POST">
-    <button class="btn btn-xs btn-danger">delete</button>
+    <button class="btn btn-xs btn-danger btnSmall">delete</button>
 </form> 
+    </span>
+</div>
 
+<div class='showDiv'>
 
-<form action="/icebreakers/<%= icebreaker._id%>/comments" method="POST">
-    <input type="text" placeholder="Respond to icebreaker!" name="text" required>
-    <button>Submit</button>
-</form>
-
-<ul>
 <% icebreaker.comments.forEach(function(comment){ %>
-    <li>
+    <div class='showDiv'>
         <%= comment.text %>
-        <a href='/icebreakers/<%= icebreaker._id %>/comments/<%= comment._id %>/edit'>edit</a>
-        <form action="/icebreakers/<%= icebreaker._id%>/comments/<%= comment._id %>/?_method=DELETE" method="POST">
-            <button>Delete</button>
-        </form>
+        <br><em><%= comment.createdAt.toDateString()%></em>
+        <div class="input-group">
+        <a href='/icebreakers/<%= icebreaker._id %>/comments/<%= comment._id %>/edit' class='btn btn-secondary btnSmall'>edit</a>
+        <span class="input-group-btn"><form action="/icebreakers/<%= icebreaker._id%>/comments/<%= comment._id %>/?_method=DELETE" method="POST">
+            <button class='btn btn-xs btn-danger btnSmall'>delete</button>
+        </form></span></div>
     </li>
+    </div>
 <% }) %>
-</ul>
+
+</div>
+
+<div class='showDiv'>
+<form action="/icebreakers/<%= icebreaker._id%>/comments" method="POST">
+    <div class="form-group">
+        <label for="comment">Got any cool stories of your own? Respond to icebreaker!</label>
+            <input type="text" class="form-control" id="comment" placeholder="Respond to icebreaker!" name="text" required>
+    </div>
+    <button class='btn btn-success btnSmall'>Submit</button>
+</form>
+</div>
+
+
+</div class='showDiv'>
+    <div><a href='/icebreakers' class="btn btn-primary btnBlue">Index</a></div>
+</div>
+
+<% include ../partials/footer %>

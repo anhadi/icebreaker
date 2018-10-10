@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const methodOverride = require("method-override");
 const passport = require('passport');
 const FacebookStrategy = require("passport-facebook").Strategy;
+const expressSanitizer = require("express-sanitizer");
 
 const Icebreaker = require("./models/icebreaker");
 const Comment = require("./models/comment");
@@ -12,12 +13,14 @@ const User = require("./models/user");
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static(__dirname + "/public"));
+app.use(expressSanitizer());
 app.use(methodOverride("_method"));
 
 app.set('view engine', 'ejs');
 
 app.use(require("express-session")({
-    secret : process.env.SECRET,
+    secret : 'asdfasdfasdfasdfsdf',
     resave : false, 
     saveUninitialized: false
 }));
@@ -27,9 +30,9 @@ app.use(passport.session());
 passport.use(new FacebookStrategy({
 
         // pull in our app id and secret from our auth.js file
-        clientID        : process.env.FACEBOOK_APP_ID,
-        clientSecret    : process.env.FACEBOOK_APP_SECRET,
-        callbackURL     : process.env.CALLBACKURL,
+        clientID        : process.env.PASSPORT_FACEBOOK_CLIENTID,
+        clientSecret    : process.env.PASSPORT_FACEBOOK_CLIENTSECRET,
+        callbackURL     : 'https://icebreaker-ahadi.c9users.io:8080/auth/facebook/callback',
         profileFields : ['id','email', 'name']
 
     },
@@ -140,9 +143,9 @@ app.get('/icebreakers/new', function(req, res) {
 });
 
 app.post('/icebreakers', function(req, res) {
-    var text = req.body.text;
+    req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
     
-    Icebreaker.create({text:text}, function(err, newlyCreated) {
+    Icebreaker.create(req.body.icebreaker, function(err, newlyCreated) {
         if(err){
             console.log(err);
         }else{
