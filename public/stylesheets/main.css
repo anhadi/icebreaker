@@ -1,3 +1,7 @@
+body { 
+    padding-top: 50px; 
+}
+
 .container {
     max-width: 900px;
     margin-bottom: 50px;
@@ -14,8 +18,8 @@
     filter: sepia(.4);
 }
 
-#one {
-    padding-top: 50px;
+#one, h3 {
+    /*padding-top: 50px;*/
     font-family: 'Amatic SC', cursive;
     font-weight:bold;
 }
@@ -23,6 +27,19 @@
 a {
     color: white;
     letter-spacing: 1.5px;
+}
+
+a:hover {
+    color: grey;
+}
+
+.fbLogin:hover {
+    color: black;
+    text-shadow: none;
+}
+
+.editTitle{
+    padding-top: 40px;
 }
 
 .thumbnail {
@@ -47,7 +64,8 @@ a {
 }
 
 .btnBlue {
-    background-color: #8b9dc3;
+    /*background-color: #8b9dc3;*/
+    background-color: #3b5998;
 }
 
 .btnSmall {
@@ -56,7 +74,22 @@ a {
     color: black;
 }
 
+.nav > li > a:hover, .nav > li > a:focus {
+  background-color: #EF92A5;
+  text-decoration: none;
+}
+
 
 .showDiv {
     padding: 20px 0;
+}
+
+.style-two {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+}
+
+#navBarSearchForm {
+    width:430px !important;
 }

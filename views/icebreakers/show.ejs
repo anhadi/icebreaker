@@ -6,39 +6,57 @@
 <div>
     <p><em><%= icebreaker.createdAt.toDateString()%></em></p>
     <p><%= icebreaker.text%></p>
+    <div class='formContainer one'>
+        <h3><%= icebreaker.question%></h3>
+    </div>
 </div>
 
-<div class="input-group">
-    <a href='/icebreakers/<%= icebreaker._id%>/edit' class='btn btn-secondary btnSmall'>edit</a>
-    <span class="input-group-btn">
-<form action="/icebreakers/<%= icebreaker._id %>/?_method=DELETE" method="POST">
-    <button class="btn btn-xs btn-danger btnSmall">delete</button>
-</form> 
-    </span>
-</div>
+
+<% if(currentUser && currentUser.facebook.id === icebreaker.author.id) { %>
+    <div class="input-group">
+        <a href='/icebreakers/<%= icebreaker._id%>/edit' class='btn btn-secondary btnSmall'>edit</a>
+        <span class="input-group-btn">
+    <form action="/icebreakers/<%= icebreaker._id %>/?_method=DELETE" method="POST">
+        <button class="btn btn-xs btn-danger btnSmall">delete</button>
+    </form> 
+        </span>
+    </div>
+<% } %>
+
+
+<div><br><hr class='style-two'></div>
 
 <div class='showDiv'>
+<h3>Responses</h3>
 
 <% icebreaker.comments.forEach(function(comment){ %>
     <div class='showDiv'>
-        <%= comment.text %>
-        <br><em><%= comment.createdAt.toDateString()%></em>
-        <div class="input-group">
-        <a href='/icebreakers/<%= icebreaker._id %>/comments/<%= comment._id %>/edit' class='btn btn-secondary btnSmall'>edit</a>
-        <span class="input-group-btn"><form action="/icebreakers/<%= icebreaker._id%>/comments/<%= comment._id %>/?_method=DELETE" method="POST">
-            <button class='btn btn-xs btn-danger btnSmall'>delete</button>
-        </form></span></div>
+        <!--<%= comment.text %>-->
+        <!--<br><em><%= comment.createdAt.toDateString()%></em>-->
+        
+        <strong><%= comment.author.username %></strong>
+        <span style='color: grey;'><em> - <%= comment.createdAt.toDateString()%></em></span>
+        <p><%= comment.text %></p>
+        
+        <% if(currentUser && currentUser.facebook.id === comment.author.id) { %>
+            <div class="input-group">
+            <a href='/icebreakers/<%= icebreaker._id %>/comments/<%= comment._id %>/edit' class='btn btn-sm btn-secondary btnSmall'>edit</a>
+            <span class="input-group-btn"><form action="/icebreakers/<%= icebreaker._id%>/comments/<%= comment._id %>/?_method=DELETE" method="POST">
+                <button class='btn btn-sm btn-danger btnSmall'>delete</button>
+            </form></span></div>
+        <% } %>
     </li>
     </div>
 <% }) %>
 
 </div>
 
+<h3>Leave a Reply</h3>
+
 <div class='showDiv'>
 <form action="/icebreakers/<%= icebreaker._id%>/comments" method="POST">
     <div class="form-group">
-        <label for="comment">Got any cool stories of your own? Respond to icebreaker!</label>
-            <input type="text" class="form-control" id="comment" placeholder="Respond to icebreaker!" name="text" required>
+            <input type="text" class="form-control" placeholder="Respond to icebreaker!" name="comment[text]" required>
     </div>
     <button class='btn btn-success btnSmall'>Submit</button>
 </form>

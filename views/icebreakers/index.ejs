@@ -7,13 +7,24 @@
         <h1 class="display-4" id="one">Icebreakers!</h1>
         <p class="lead">Learn more about the remarkable individuals around you. Share a noteable experience or ask your teammates about one of the theirs! You will always be astounded, inspired, and entertained. Or at least tickled.</p>
         <hr class="my-4">
-        <p><a href="/auth/facebook">Login with Facebook</a></p>
-        <a class="btn btn-primary btn-lg" href="/icebreakers/new" role="button">Create Icebreaker</a>
+        <% if(!currentUser){ %>
+        <p><a href="/auth/facebook" class='fbLogin'>Login with Facebook</a></p>
+        <% } else { %>
+       <p class="lead"> Welcome back, <%= currentUser.facebook.first_name %>!</p>
+      
+      <% } %>
+        <a class="btn btnBlue btn-lg" href="/icebreakers/new" role="button">Create Icebreaker</a>
     </div>
 </div>
 
 <div class="container container2">
     <div class="row">
+        <% if(icebreakers.length===0){ %>
+                <div>
+                    <br>
+                    <h3>Sorry! No icebreakers found with that search.</h3>
+                </div>
+            <% } %>
         <% icebreakers.forEach(function(icebreaker) { %>
             <div class="col-lg-4 col-md-6 col-sm-12">
                 <a class='login' href="/icebreakers/<%= icebreaker._id %>">
@@ -23,6 +34,14 @@
                 </a>
             </div>
         <% }) %>
+    </div>
+    
+    <div class="row">
+        <% if(displayButton) { %>
+            </div class='showDiv'>
+                <div><br><br><br><a href='/icebreakers' class="btn btn-primary btnBlue">Index</a></div>
+            </div>
+        <% } %>
     </div>
 </div>
 

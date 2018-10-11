@@ -3,13 +3,12 @@ const mongoose = require("mongoose");
 const icebreakerSchema = mongoose.Schema({
     team: String,
     title: String,
-    image: String,
     text: String,
     question: String,
     createdAt: { type: Date, default: Date.now },
     author: {
         id: {
-            type: mongoose.Schema.Types.ObjectId,
+            type: String,
             ref: 'User'
         },
         username: String

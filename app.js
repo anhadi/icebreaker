@@ -30,8 +30,8 @@ app.use(passport.session());
 passport.use(new FacebookStrategy({
 
         // pull in our app id and secret from our auth.js file
-        clientID        : process.env.PASSPORT_FACEBOOK_CLIENTID,
-        clientSecret    : process.env.PASSPORT_FACEBOOK_CLIENTSECRET,
+        clientID        : process.env.FACEBOOK_CLIENTID,
+        clientSecret    : process.env.FACEBOOK_CLIENTSECRET,
         callbackURL     : 'https://icebreaker-ahadi.c9users.io:8080/auth/facebook/callback',
         profileFields : ['id','email', 'name']
 
@@ -94,32 +94,28 @@ mongoose.connect('mongodb://localhost:27017/icebreaker', { useNewUrlParser: true
 
 // ---------------------------------------------------- auth routes
 
+app.get('/please_login', function(req, res) {
+    res.render("misc/pleaseLogin", {currentUser: req.user});
+});
+
 app.get('/auth/facebook', passport.authenticate('facebook', { 
   scope : ['public_profile', 'email']
 }));
 
 app.get('/auth/facebook/callback', passport.authenticate('facebook', {
-    successRedirect : '/secret',
+    successRedirect : '/icebreakers',
     failureRedirect : '/icebreakers'
 }));
 
-app.get('/secret', isLoggedIn, function(req, res) {
-    res.send('You reached the success route')
-})
-
 app.get('/logout', function(req, res) {
     req.logout();
-    res.redirect('/');
+    res.redirect("back");
 });
 
 function isLoggedIn(req, res, next) {
-
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated())
+    if (req.user)
         return next();
-
-    // if they aren't redirect them to the home page
-    res.redirect('/');
+    res.redirect('/please_login');
 }
 
 // ---------------------------------------------------- icebreakers routes
@@ -129,21 +125,42 @@ app.get('/', function(req, res) {
 })
 
 app.get('/icebreakers', function(req, res) {
-    Icebreaker.find({}, function(err, icebreakers){
-        if(err){
-            console.log(err);
-        } else {
-            res.status(200).render("icebreakers/index", {icebreakers:icebreakers});
-        }
-    });
+    if(req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        
+        Icebreaker.find({'$or':[
+            {'team':{'$regex':regex, '$options':'i'}},
+            {'title':{'$regex':regex, '$options':'i'}},
+            {'text':{'$regex':regex, '$options':'i'}},
+            {'question':{'$regex':regex, '$options':'i'}},
+            {'author.username':{'$regex':regex, '$options':'i'}}]}, null, {sort: {createdAt: -1}}, function(err, icebreakers){
+            if(err){
+                console.log(err);
+            } else {
+                res.status(200).render("icebreakers/index", {icebreakers:icebreakers, displayButton:true, currentUser: req.user});
+            }
+        })
+    } else {
+        Icebreaker.find({}, null, {sort: {createdAt: -1}}, function(err, icebreakers){
+            if(err){
+                console.log(err);
+            } else {
+                res.status(200).render("icebreakers/index", {icebreakers:icebreakers, displayButton:false,currentUser: req.user});
+            }
+        })
+    }
 });
 
-app.get('/icebreakers/new', function(req, res) {
-    res.render("icebreakers/new");
+app.get('/icebreakers/new', isLoggedIn, function(req, res) {
+    res.render("icebreakers/new", {currentUser: req.user});
 });
 
-app.post('/icebreakers', function(req, res) {
+app.post('/icebreakers', isLoggedIn, function(req, res) {
     req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
+    req.body.icebreaker.author = {
+        id: req.user.facebook.id,
+        username: req.user.facebook.first_name
+    }
     
     Icebreaker.create(req.body.icebreaker, function(err, newlyCreated) {
         if(err){
@@ -156,28 +173,33 @@ app.post('/icebreakers', function(req, res) {
 
 app.get('/icebreakers/:id', function(req, res) {
     Icebreaker.findById(req.params.id).populate('comments').exec(function(err, icebreaker){
-        if(err){
+        if(err || !icebreaker){
             console.log(err);
+            res.send("error or no icebreaker");
         }else{
-            res.render('icebreakers/show', {icebreaker:icebreaker});
+            res.render('icebreakers/show', {icebreaker:icebreaker,currentUser: req.user});
         }
     })
 });
 
 app.get('/icebreakers/:id/edit', function(req, res) {
     Icebreaker.findById(req.params.id, function(err, icebreaker){
-        if(err){
+        if(err || !icebreaker){
             console.log(err);
+            res.send('error or no icebreaker')
         }else{
-            res.render('icebreakers/edit', {icebreaker:icebreaker});
+            res.render('icebreakers/edit', {icebreaker:icebreaker,currentUser: req.user});
         }
     })
 })
 
 app.put('/icebreakers/:id', function(req, res){
-    Icebreaker.findByIdAndUpdate(req.params.id, {text: req.body.text}, function(err, updatedIcebreaker){
-        if(err){
+    req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
+    
+    Icebreaker.findByIdAndUpdate(req.params.id, req.body.icebreaker, function(err, updatedIcebreaker){
+        if(err || !updatedIcebreaker){
             console.log(err);
+            res.send("unable to update icebreaker")
         }else{
             res.redirect('/icebreakers/'+updatedIcebreaker._id);
         }
@@ -196,14 +218,18 @@ app.delete('/icebreakers/:id', function(req, res){
 
 // ---------------------------------------------------- comments routes
 
-app.post('/icebreakers/:id/comments', function(req, res) {
-    var text = req.body.text;
+app.post('/icebreakers/:id/comments', isLoggedIn, function(req, res) {
+    req.body.comment.author = {
+        id: req.user.facebook.id,
+        username: req.user.facebook.first_name
+    }
+    
     
     Icebreaker.findById(req.params.id, function(err, icebreaker) {
-        if(err){
+        if(err || !icebreaker){
             console.log(err);
         }else{
-            Comment.create({text:text}, function(err, comment){
+            Comment.create(req.body.comment, function(err, comment){
                 if(err){
                     console.log(err);
                 } else {
@@ -218,14 +244,16 @@ app.post('/icebreakers/:id/comments', function(req, res) {
 
 app.get('/icebreakers/:id/comments/:comment_id/edit', function(req, res) {
     Icebreaker.findById(req.params.id, function(err, icebreaker) {
-        if(err){
+        if(err || !icebreaker){
             console.log(err);
+            res.send('error or no icebreaker');
         }else{
             Comment.findById(req.params.comment_id, function(err, comment) {
-                if(err){
+                if(err || !comment){
                     console.log(err);
+                    res.send('error or no comment');
                 } else {
-                    res.render('comments/edit', {icebreaker:icebreaker, comment:comment})
+                    res.render('comments/edit', {icebreaker:icebreaker, comment:comment,currentUser: req.user})
                 }
             })
         }
@@ -261,5 +289,9 @@ app.delete('/icebreakers/:id/comments/:comment_id', function(req, res){
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("The Icebreaker server is up!");
 });
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
 
 module.exports = {app}
