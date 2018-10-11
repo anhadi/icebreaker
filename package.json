@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha icebreaker/**/*.test.js",
-    "test-watch": "./node_modules/mocha/bin/mocha"
+    "test-watch": "./node_modules/mocha/bin/mocha",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
