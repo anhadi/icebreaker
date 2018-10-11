@@ -30,8 +30,8 @@ app.use(passport.session());
 passport.use(new FacebookStrategy({
 
         // pull in our app id and secret from our auth.js file
-        clientID        : '108416976749706',
-        clientSecret    : '69564ef2ea86a32788722f854b03e622',
+        clientID        : process.env.FACEBOOK_CLIENTID,
+        clientSecret    : process.env.FACEBOOK_CLIENTSECRET,
         callbackURL     : 'https://icebreaker-ahadi.c9users.io:8080/auth/facebook/callback',
         profileFields : ['id','email', 'name']
 
@@ -88,7 +88,7 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-mongoose.connect('mongodb://annisahadi:Techhigh2010@ds123603.mlab.com:23603/icebreaker', { useNewUrlParser: true });
+mongoose.connect(process.env.DBURL, { useNewUrlParser: true });
 
 
 
