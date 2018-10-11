@@ -88,7 +88,7 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-mongoose.connect('mongodb://localhost:27017/icebreaker', { useNewUrlParser: true });
+mongoose.connect('mongodb://process.env.DBUSER:process.env.DBPASSWORD@ds123603.mlab.com:23603/icebreaker', { useNewUrlParser: true });
 
 
 
