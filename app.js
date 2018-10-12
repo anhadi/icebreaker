@@ -157,6 +157,7 @@ app.get('/icebreakers/new', isLoggedIn, function(req, res) {
 
 app.post('/icebreakers', isLoggedIn, function(req, res) {
     req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
+    req.body.icebreaker.text.replace(/\r?\n/g, '<br />');
     req.body.icebreaker.author = {
         id: req.user.facebook.id,
         username: req.user.facebook.first_name
@@ -219,6 +220,7 @@ app.delete('/icebreakers/:id', function(req, res){
 // ---------------------------------------------------- comments routes
 
 app.post('/icebreakers/:id/comments', isLoggedIn, function(req, res) {
+    req.body.comment.text.replace(/\r?\n/g, '<br />');
     req.body.comment.author = {
         id: req.user.facebook.id,
         username: req.user.facebook.first_name
