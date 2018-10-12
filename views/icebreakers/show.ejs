@@ -6,7 +6,7 @@
 <div><p class="lead">By <%= icebreaker.author.username %></p></div>
 <div>
     <p><em><%= icebreaker.createdAt.toDateString()%></em></p>
-    <p><%= icebreaker.text%></p>
+    <p><%- icebreaker.text%></p>
     <div class='formContainer one'>
         <h3><%= icebreaker.question%></h3>
     </div>

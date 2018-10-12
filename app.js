@@ -27,6 +27,7 @@ app.use(require("express-session")({
 app.use(passport.initialize());
 app.use(passport.session());
 
+
 passport.use(new FacebookStrategy({
 
         // pull in our app id and secret from our auth.js file
@@ -156,8 +157,8 @@ app.get('/icebreakers/new', isLoggedIn, function(req, res) {
 });
 
 app.post('/icebreakers', isLoggedIn, function(req, res) {
+    req.body.icebreaker.text = req.body.icebreaker.text.replace(/\r?\n/g, '<br>');
     req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
-    req.body.icebreaker.text.replace(/\r?\n/g, '<br />');
     req.body.icebreaker.author = {
         id: req.user.facebook.id,
         username: req.user.facebook.first_name
@@ -195,6 +196,7 @@ app.get('/icebreakers/:id/edit', function(req, res) {
 })
 
 app.put('/icebreakers/:id', function(req, res){
+    req.body.icebreaker.text = req.body.icebreaker.text.replace(/\r?\n/g, '<br>');
     req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
     
     Icebreaker.findByIdAndUpdate(req.params.id, req.body.icebreaker, function(err, updatedIcebreaker){
@@ -220,7 +222,6 @@ app.delete('/icebreakers/:id', function(req, res){
 // ---------------------------------------------------- comments routes
 
 app.post('/icebreakers/:id/comments', isLoggedIn, function(req, res) {
-    req.body.comment.text.replace(/\r?\n/g, '<br />');
     req.body.comment.author = {
         id: req.user.facebook.id,
         username: req.user.facebook.first_name
