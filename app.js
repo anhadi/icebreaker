@@ -175,7 +175,7 @@ app.get('/icebreakers/:id', function(req, res) {
     Icebreaker.findById(req.params.id).populate('comments').exec(function(err, icebreaker){
         if(err || !icebreaker){
             console.log(err);
-            res.send("error or no icebreaker");
+            res.render("misc/error", {currentUser: req.user});
         }else{
             res.render('icebreakers/show', {icebreaker:icebreaker,currentUser: req.user});
         }
@@ -186,7 +186,7 @@ app.get('/icebreakers/:id/edit', function(req, res) {
     Icebreaker.findById(req.params.id, function(err, icebreaker){
         if(err || !icebreaker){
             console.log(err);
-            res.send('error or no icebreaker')
+            res.render("misc/error", {currentUser: req.user});
         }else{
             res.render('icebreakers/edit', {icebreaker:icebreaker,currentUser: req.user});
         }
@@ -246,12 +246,12 @@ app.get('/icebreakers/:id/comments/:comment_id/edit', function(req, res) {
     Icebreaker.findById(req.params.id, function(err, icebreaker) {
         if(err || !icebreaker){
             console.log(err);
-            res.send('error or no icebreaker');
+            res.render("misc/error", {currentUser: req.user});
         }else{
             Comment.findById(req.params.comment_id, function(err, comment) {
                 if(err || !comment){
                     console.log(err);
-                    res.send('error or no comment');
+                    res.render("misc/error", {currentUser: req.user});
                 } else {
                     res.render('comments/edit', {icebreaker:icebreaker, comment:comment,currentUser: req.user})
                 }
