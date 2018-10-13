@@ -1,0 +1,24 @@
+<% include ../partials/header %>
+
+<div class='container'>
+    <div class='teams' style='padding: 0 35px;'>
+        <div><br><h1 class="display-4" id="one"><%= team.teamName%></h1></div>
+        <div><br><hr class='style-two'></div>
+        <div class='showDiv row'>
+            <% team.icebreakers.forEach(function(icebreaker){ %>
+                <div class="col-lg-4 col-md-6 col-sm-12">
+                    <a class='login' href="/icebreakers/<%= icebreaker._id %>">
+                        <div class="thumbnail">
+                            <h4><%= icebreaker.title %></h4>
+                        </div>
+                    </a>
+                </div>
+            <% }) %>
+        </div>
+    <div class='row buttonCenter'><a class="btn btnBlue btn-lg" href="/icebreakers/new" role="button">Create Icebreaker</a></div>
+    </div>
+    <div><a href='/icebreakers' class="btn btn-primary btnBlue">Index</a></div>
+    </div>
+</div>
+
+<% include ../partials/footer %>

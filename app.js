@@ -7,8 +7,12 @@ const FacebookStrategy = require("passport-facebook").Strategy;
 const expressSanitizer = require("express-sanitizer");
 
 const Icebreaker = require("./models/icebreaker");
+const Team = require("./models/team")
 const Comment = require("./models/comment");
 const User = require("./models/user");
+const icebreakerRoutes = require("./routes/icebreakers");
+const commentRoutes = require("./routes/comments");
+const teamRoutes = require("./routes/teams");
 
 var app = express();
 app.use(bodyParser.json());
@@ -20,20 +24,19 @@ app.use(methodOverride("_method"));
 app.set('view engine', 'ejs');
 
 app.use(require("express-session")({
-    secret : 'asdfasdfasdfasdfsdf',
+    secret : process.env.SECRET,
     resave : false, 
     saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-
 passport.use(new FacebookStrategy({
 
         // pull in our app id and secret from our auth.js file
         clientID        : process.env.FACEBOOK_CLIENTID,
         clientSecret    : process.env.FACEBOOK_CLIENTSECRET,
-        callbackURL     : 'https://salty-everglades-52090.herokuapp.com/auth/facebook/callback',
+        callbackURL     : 'https://icebreaker-ahadi.c9users.io:8080/auth/facebook/callback',
         profileFields : ['id','email', 'name']
 
     },
@@ -91,9 +94,9 @@ passport.deserializeUser(function(id, done) {
 
 mongoose.connect(process.env.DBURL, { useNewUrlParser: true });
 
-
-
-// ---------------------------------------------------- auth routes
+app.use('/icebreakers', icebreakerRoutes);
+app.use('/icebreakers/:id/comments', commentRoutes);
+app.use('/teams', teamRoutes);
 
 app.get('/please_login', function(req, res) {
     res.render("misc/pleaseLogin", {currentUser: req.user});
@@ -113,188 +116,13 @@ app.get('/logout', function(req, res) {
     res.redirect("back");
 });
 
-function isLoggedIn(req, res, next) {
-    if (req.user)
-        return next();
-    res.redirect('/please_login');
-}
-
-// ---------------------------------------------------- icebreakers routes
-
 app.get('/', function(req, res) {
     res.redirect('/icebreakers');
-})
-
-app.get('/icebreakers', function(req, res) {
-    if(req.query.search){
-        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
-        
-        Icebreaker.find({'$or':[
-            {'team':{'$regex':regex, '$options':'i'}},
-            {'title':{'$regex':regex, '$options':'i'}},
-            {'text':{'$regex':regex, '$options':'i'}},
-            {'question':{'$regex':regex, '$options':'i'}},
-            {'author.username':{'$regex':regex, '$options':'i'}}]}, null, {sort: {createdAt: -1}}, function(err, icebreakers){
-            if(err){
-                console.log(err);
-            } else {
-                res.status(200).render("icebreakers/index", {icebreakers:icebreakers, displayButton:true, currentUser: req.user});
-            }
-        })
-    } else {
-        Icebreaker.find({}, null, {sort: {createdAt: -1}}, function(err, icebreakers){
-            if(err){
-                console.log(err);
-            } else {
-                res.status(200).render("icebreakers/index", {icebreakers:icebreakers, displayButton:false,currentUser: req.user});
-            }
-        })
-    }
-});
-
-app.get('/icebreakers/new', isLoggedIn, function(req, res) {
-    res.render("icebreakers/new", {currentUser: req.user});
-});
-
-app.post('/icebreakers', isLoggedIn, function(req, res) {
-    req.body.icebreaker.text = req.body.icebreaker.text.replace(/\r?\n/g, '<br>');
-    req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
-    req.body.icebreaker.author = {
-        id: req.user.facebook.id,
-        username: req.user.facebook.first_name
-    }
-    
-    Icebreaker.create(req.body.icebreaker, function(err, newlyCreated) {
-        if(err){
-            console.log(err);
-        }else{
-            res.redirect("/icebreakers");
-        }
-    });
-});
-
-app.get('/icebreakers/:id', function(req, res) {
-    Icebreaker.findById(req.params.id).populate('comments').exec(function(err, icebreaker){
-        if(err || !icebreaker){
-            console.log(err);
-            res.render("misc/error", {currentUser: req.user});
-        }else{
-            res.render('icebreakers/show', {icebreaker:icebreaker,currentUser: req.user});
-        }
-    })
-});
-
-app.get('/icebreakers/:id/edit', function(req, res) {
-    Icebreaker.findById(req.params.id, function(err, icebreaker){
-        if(err || !icebreaker){
-            console.log(err);
-            res.render("misc/error", {currentUser: req.user});
-        }else{
-            res.render('icebreakers/edit', {icebreaker:icebreaker,currentUser: req.user});
-        }
-    })
-})
-
-app.put('/icebreakers/:id', function(req, res){
-    req.body.icebreaker.text = req.body.icebreaker.text.replace(/\r?\n/g, '<br>');
-    req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
-    
-    Icebreaker.findByIdAndUpdate(req.params.id, req.body.icebreaker, function(err, updatedIcebreaker){
-        if(err || !updatedIcebreaker){
-            console.log(err);
-            res.send("unable to update icebreaker")
-        }else{
-            res.redirect('/icebreakers/'+updatedIcebreaker._id);
-        }
-    })
-})
-
-app.delete('/icebreakers/:id', function(req, res){
-    Icebreaker.findByIdAndRemove(req.params.id, function(err){
-        if(err){
-            console.log(err);
-        }else{
-            res.redirect('/icebreakers');
-        }
-    })
-})
-
-// ---------------------------------------------------- comments routes
-
-app.post('/icebreakers/:id/comments', isLoggedIn, function(req, res) {
-    req.body.comment.author = {
-        id: req.user.facebook.id,
-        username: req.user.facebook.first_name
-    }
-    
-    
-    Icebreaker.findById(req.params.id, function(err, icebreaker) {
-        if(err || !icebreaker){
-            console.log(err);
-        }else{
-            Comment.create(req.body.comment, function(err, comment){
-                if(err){
-                    console.log(err);
-                } else {
-                    icebreaker.comments.push(comment);
-                    icebreaker.save();
-                    res.redirect('/icebreakers/' + req.params.id);
-                }
-            }) 
-        }
-    })
-})
-
-app.get('/icebreakers/:id/comments/:comment_id/edit', function(req, res) {
-    Icebreaker.findById(req.params.id, function(err, icebreaker) {
-        if(err || !icebreaker){
-            console.log(err);
-            res.render("misc/error", {currentUser: req.user});
-        }else{
-            Comment.findById(req.params.comment_id, function(err, comment) {
-                if(err || !comment){
-                    console.log(err);
-                    res.render("misc/error", {currentUser: req.user});
-                } else {
-                    res.render('comments/edit', {icebreaker:icebreaker, comment:comment,currentUser: req.user})
-                }
-            })
-        }
-    });
-});
-
-app.put('/icebreakers/:id/comments/:comment_id', function(req, res){
-    Comment.findByIdAndUpdate(req.params.comment_id, {text: req.body.text}, function(err, comment){
-        if(err){
-            console.log(err);
-        }else{
-            res.redirect('/icebreakers/' + req.params.id);
-        }
-    });
-});
-
-app.delete('/icebreakers/:id/comments/:comment_id', function(req, res){
-    Icebreaker.findByIdAndUpdate(req.params.id, { $pull: { comments: req.params.comment_id  } }, function(err, icebreaker) {
-        if(err){
-            console.log(err);
-        } else {
-            Comment.findByIdAndRemove(req.params.comment_id, function(err){
-                if(err){
-                    console.log(err);
-                }else{
-                    res.redirect('/icebreakers/' + req.params.id);
-                }
-            })
-        }
-    })
 })
 
 app.listen(process.env.PORT, process.env.IP, function(){
     console.log("The Icebreaker server is up!");
 });
 
-function escapeRegex(text) {
-    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-};
 
 module.exports = {app}

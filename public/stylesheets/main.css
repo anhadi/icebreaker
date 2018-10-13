@@ -24,6 +24,29 @@ body {
     font-weight:bold;
 }
 
+.dropdown{
+    padding: 10px 40px;
+}
+
+.teams {
+    font-family: 'Amatic SC', cursive;
+    letter-spacing: 3px;
+    margin: 25px 25px 25px 25px;
+    color: black;
+    background-color: #fbf5e9;
+    border-bottom-style: dashed;
+    border-color: #ad7e1f;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.heightBox{
+    height: 100px;
+}
+
 a {
     color: white;
     letter-spacing: 1.5px;
@@ -92,4 +115,11 @@ a:hover {
 
 #navBarSearchForm {
     width:430px !important;
+}
+
+.buttonCenter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
 }
