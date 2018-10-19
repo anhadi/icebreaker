@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const icebreakerSchema = mongoose.Schema({
     team: String,
-    title: String,
     text: String,
     question: String,
     createdAt: { type: Date, default: Date.now },

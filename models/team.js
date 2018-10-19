@@ -7,7 +7,14 @@ const teamSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Icebreaker"
         }
-    ]
+    ],
+    creator: {
+        id: {
+            type: String,
+            ref: 'User'
+        },
+        username: String
+    }
 });
 
 const Team = mongoose.model("Team", teamSchema);

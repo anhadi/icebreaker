@@ -12,7 +12,6 @@ router.get('/', function(req, res) {
         
         Icebreaker.find({'$or':[
             {'team':{'$regex':regex, '$options':'i'}},
-            {'title':{'$regex':regex, '$options':'i'}},
             {'text':{'$regex':regex, '$options':'i'}},
             {'question':{'$regex':regex, '$options':'i'}},
             {'author.username':{'$regex':regex, '$options':'i'}}]}, null, {sort: {createdAt: -1}}, function(err, icebreakers){
@@ -96,7 +95,7 @@ router.get('/:id/edit', function(req, res) {
     })
 })
 
-router.put('/:id', function(req, res){
+router.put('/:id', isLoggedIn, function(req, res){
     req.body.icebreaker.text = req.body.icebreaker.text.replace(/\r?\n/g, '<br>');
     req.body.icebreaker.text = req.sanitize(req.body.icebreaker.text);
     
@@ -110,7 +109,7 @@ router.put('/:id', function(req, res){
     })
 })
 
-router.delete('/:id', function(req, res){
+router.delete('/:id', isLoggedIn, function(req, res){
     Icebreaker.findByIdAndRemove(req.params.id, function(err){
         if(err){
             console.log(err);

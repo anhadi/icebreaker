@@ -3,13 +3,23 @@
 <div class='container'>
     <div class='teams' style='padding: 0 35px;'>
         <div><br><h1 class="display-4" id="one"><%= team.teamName%></h1></div>
-        <div><br><hr class='style-two'></div>
+        <div>
+            <p>
+                Created by <%= team.creator.username %>
+                    <% if(currentUser && currentUser.facebook.id === team.creator.id) { %>
+                        <span class="input-group">
+                            <a href='/teams/<%= team._id%>/edit' class='btn btn-secondary btnSmall'>edit</a>
+                        </span>
+                    <% } %>   
+            </p>
+        </div>
+        <div><hr class='style-two'></div>
         <div class='showDiv row'>
             <% team.icebreakers.forEach(function(icebreaker){ %>
                 <div class="col-lg-4 col-md-6 col-sm-12">
                     <a class='login' href="/icebreakers/<%= icebreaker._id %>">
                         <div class="thumbnail">
-                            <h4><%= icebreaker.title %></h4>
+                            <h4><%= icebreaker.question %></h4>
                         </div>
                     </a>
                 </div>

@@ -6,22 +6,17 @@
        
     <form action="/icebreakers/<%= icebreaker._id%>/?_method=PUT" method="POST">
         <div class='formContainer'>
-    
-            <div class="form-group">
-                <label>Give your icebreaker a title. This is what people will see on the home page.</label>
-                <input type="text" class="form-control" value='<%= icebreaker.title%>' name="icebreaker[title]" required>
-            </div>
           
-            <div class="form-group">
-                <label for="exampleTextarea">Share a cool story or fact about yourself.</label>
-                <textarea class="form-control" id="exampleTextarea" name="icebreaker[text]" required rows="3"><%= icebreaker.text%></textarea>
-            </div>
-              
             <div class="form-group">
                 <label>Ask your teammates an icebreaker!</label>
                 <input type="text" class="form-control" value='<%= icebreaker.question%>' name="icebreaker[question]" required>
             </div>
-              
+            
+            <div class="form-group">
+                <label for="exampleTextarea">Answer the icebreaker and share a cool story or fact about yourself.</label>
+                <textarea class="form-control" id="exampleTextarea" name="icebreaker[text]" required rows="3"><%= icebreaker.text%></textarea>
+            </div>
+            
             <button type="submit" class="btn btn-primary btnBlue">Submit</button>
         </div>
     </form>

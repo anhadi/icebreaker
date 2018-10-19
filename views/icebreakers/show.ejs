@@ -2,14 +2,10 @@
 
 <div class='container'>
     <div class='formContainer'>
-<div><h1 class="display-4" id="one"><%= icebreaker.title%></h1></div>
-<div><p class="lead">By <%= icebreaker.author.username %></p></div>
+<div><h1 class="display-4" id="one"><%= icebreaker.question%></h1></div>
+<div><p class="lead">By <%= icebreaker.author.username %> - <span style='color: grey;'><em><%= icebreaker.createdAt.toDateString()%></em></span></p></div>
 <div>
-    <p><em><%= icebreaker.createdAt.toDateString()%></em></p>
     <p><%- icebreaker.text%></p>
-    <div class='formContainer one'>
-        <h3><%= icebreaker.question%></h3>
-    </div>
 </div>
 
 
