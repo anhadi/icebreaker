@@ -31,15 +31,12 @@ app.use(require("express-session")({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// https://salty-everglades-52090.herokuapp.com/auth/facebook/callback
-// https://icebreaker-ahadi.c9users.io:8080/auth/facebook/callback
-
 passport.use(new FacebookStrategy({
 
         // pull in our app id and secret from our auth.js file
         clientID        : process.env.FACEBOOK_CLIENTID,
         clientSecret    : process.env.FACEBOOK_CLIENTSECRET,
-        callbackURL     : 'https://icebreaker-ahadi.c9users.io:8080/auth/facebook/callback',
+        callbackURL     : 'https://salty-everglades-52090.herokuapp.com/auth/facebook/callback',
         profileFields : ['id','email', 'name']
 
     },
