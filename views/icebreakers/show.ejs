@@ -2,10 +2,10 @@
 
 <div class='container'>
     <div class='formContainer'>
-<div><h1 class="display-4" id="one"><%= icebreaker.question%></h1></div>
+<div><h1 class="display-4 showOverflow" id="one"><%= icebreaker.question%></h1></div>
 <div><p class="lead">By <%= icebreaker.author.username %> - <span style='color: grey;'><em><%= icebreaker.createdAt.toDateString()%></em></span></p></div>
 <div>
-    <p><%- icebreaker.text%></p>
+    <p class='showOverflow'><%- icebreaker.text%></p>
 </div>
 
 
@@ -28,8 +28,6 @@
 
 <% icebreaker.comments.forEach(function(comment){ %>
     <div class='showDiv'>
-        <!--<%= comment.text %>-->
-        <!--<br><em><%= comment.createdAt.toDateString()%></em>-->
         
         <strong><%= comment.author.username %></strong>
         <span style='color: grey;'><em> - <%= comment.createdAt.toDateString()%></em></span>

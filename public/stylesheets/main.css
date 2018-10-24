@@ -32,6 +32,7 @@ body {
     font-family: 'Amatic SC', cursive;
     letter-spacing: 3px;
     margin: 25px 25px 25px 25px;
+    padding: 25px;
     color: black;
     background-color: #fbf5e9;
     border-bottom-style: dashed;
@@ -40,7 +41,6 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 100%;
 }
 
 .heightBox{
@@ -73,6 +73,7 @@ a:hover {
     padding: 15px;
     margin: 25px 25px 25px 25px;
     color: black;
+    max-height: 200px;
 }
 
 .formContainer{
@@ -122,4 +123,20 @@ a:hover {
     align-items: center;
     justify-content: center;
     padding: 25px;
+}
+
+.hideOverflow {
+    width:100%;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical; 
+    overflow:hidden;
+    text-overflow: ellipsis;
+}
+
+.showOverflow {
+    word-wrap: break-word;
+    display:block;
+    width: 100%;
+    white-space: normal;
 }
