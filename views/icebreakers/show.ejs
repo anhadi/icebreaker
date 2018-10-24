@@ -53,7 +53,7 @@
 <div class='showDiv'>
 <form action="/icebreakers/<%= icebreaker._id%>/comments" method="POST">
     <div class="form-group">
-            <input type="text" class="form-control" placeholder="Respond to icebreaker!" name="comment[text]" required>
+            <input type="text" class="form-control" placeholder="Respond to icebreaker!" name="comment[text]" required autocomplete="off" >
     </div>
     <button class='btn btn-success btnSmall'>Submit</button>
 </form>

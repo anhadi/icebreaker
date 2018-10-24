@@ -66,6 +66,17 @@ router.get('/:team_id', function(req, res) {
     })
 })
 
+router.get('/:team_id/new_icebreaker', isLoggedIn, function(req, res) {
+    Team.findById(req.params.team_id, function(err, team) {
+        if(err || !team){
+            console.log(err);
+            res.render("misc/error", {currentUser: req.user});
+        } else {
+            res.render('teams/newIcebreaker', {team:team, currentUser: req.user})
+        }
+    })
+})
+
 router.get('/:team_id/edit', function(req, res) {
     Team.findById(req.params.team_id, function(err, team){
         if(err || !team){

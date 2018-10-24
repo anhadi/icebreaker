@@ -5,7 +5,7 @@
         <div><br><h1 class="display-4" id="one"><%= team.teamName%></h1></div>
         <div>
             <p>
-                Created by <%= team.creator.username %>
+                Created by <%= team.creator.username %>  
                     <% if(currentUser && currentUser.facebook.id === team.creator.id) { %>
                         <span class="input-group">
                             <a href='/teams/<%= team._id%>/edit' class='btn btn-secondary btnSmall'>edit</a>
@@ -13,21 +13,30 @@
                     <% } %>   
             </p>
         </div>
+        
         <div><hr class='style-two'></div>
+        
+        
         <div class='showDiv row'>
-            <% team.icebreakers.forEach(function(icebreaker){ %>
+            <% for(var i = (team.icebreakers.length - 1); i>= 0; i--){ %>
                 <div class="col-lg-4 col-md-6 col-sm-12">
-                    <a class='login' href="/icebreakers/<%= icebreaker._id %>">
+                    <a class='login' href="/icebreakers/<%= team.icebreakers[i]._id %>">
                         <div class="thumbnail">
-                            <h4><%= icebreaker.question %></h4>
+                            <h4><%= team.icebreakers[i].question %></h4>
                         </div>
                     </a>
                 </div>
-            <% }) %>
+            <% } %>
+            
+            
+           
+            
+            
+            
         </div>
-    <div class='row buttonCenter'><a class="btn btnBlue btn-lg" href="/icebreakers/new" role="button">Create Icebreaker</a></div>
+    <div class='row buttonCenter'><a class="btn btnBlue btn-lg" href="/teams/<%= team._id %>/new_icebreaker" role="button">Create Icebreaker</a></div>
     </div>
-    <div><a href='/icebreakers' class="btn btn-primary btnBlue">Index</a></div>
+    <div><a href='/teams' class="btn btn-primary btnBlue">Index</a></div>
     </div>
 </div>
 

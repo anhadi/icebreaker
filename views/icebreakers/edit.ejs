@@ -9,12 +9,12 @@
           
             <div class="form-group">
                 <label>Ask your teammates an icebreaker!</label>
-                <input type="text" class="form-control" value='<%= icebreaker.question%>' name="icebreaker[question]" required>
+                <input type="text" class="form-control" value='<%= icebreaker.question%>' name="icebreaker[question]" required autocomplete="off" >
             </div>
             
             <div class="form-group">
                 <label for="exampleTextarea">Answer the icebreaker and share a cool story or fact about yourself.</label>
-                <textarea class="form-control" id="exampleTextarea" name="icebreaker[text]" required rows="3"><%= icebreaker.text%></textarea>
+                <textarea class="form-control" id="exampleTextarea" name="icebreaker[text]" required rows="3" autocomplete="off" ><%= icebreaker.text%></textarea>
             </div>
             
             <button type="submit" class="btn btn-primary btnBlue">Submit</button>

@@ -8,6 +8,7 @@ const teamSchema = mongoose.Schema({
             ref: "Icebreaker"
         }
     ],
+    createdAt: { type: Date, default: Date.now },
     creator: {
         id: {
             type: String,

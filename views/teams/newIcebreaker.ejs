@@ -10,11 +10,9 @@
     <div class="form-group">
         <label for="exampleFormControlSelect1">Which team is this icebreaker for?</label>
         <select class="form-control" id="icebreaker[team]" name="icebreaker[team]">
-        <% teams.forEach(function(team) { %>
             <option value='<%= team._id %>' ><%= team.teamName %></option>
-        <% }) %>
         </select>
-        <small class=" text-muted">Don't see your Team? Go to <a style='color:grey;' href='/teams/new'>CREATE TEAM.</a></small>
+        <small id="emailHelp" class="form-text text-muted">Don't see your Team? Go to <a style='color:grey;' href='/teams/new'>CREATE TEAM.</a></small>
     </div>
             <div class="form-group">
                 <label>Ask your teammates an icebreaker!</label>
